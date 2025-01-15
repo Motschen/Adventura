@@ -9,17 +9,23 @@ using std::string;
 class BlockRegistry {
 public:
     Block AIR = Block(Identifier("adventura", "air"), ' ', BlockSettingsBuilder().nonSolid().build());
+    Block WATER = Block(Identifier("adventura", "water"), '~', Color::BRIGHT_BLUE, BlockSettingsBuilder().nonSolid().build());
     Block PLATFORM = Block(Identifier("adventura", "platform"), '-', BlockSettingsBuilder().build());
-    Block LADDER = Block(Identifier("adventura", "ladder"), 'H', BlockSettingsBuilder().climbableFromBottom().climbableFromTop().build());
-    Block START = Block(Identifier("adventura", "start"), 'S', BlockSettingsBuilder().build());
-    Block GOAL = Block(Identifier("adventura", "goal"), 'O', BlockSettingsBuilder().build());
+    Block LADDER = Block(Identifier("adventura", "ladder"), 'H', Color::BRIGHT_MAGENTA, BlockSettingsBuilder().climbableFromBottom().climbableFromTop().build());
+    Block START = Block(Identifier("adventura", "start"), 'S', BlockSettingsBuilder().nonSolid().build());
+    Block GOAL = Block(Identifier("adventura", "goal"), 'O', Color::BRIGHT_GREEN, BlockSettingsBuilder().nonSolid().build());
+    Block WALL = Block(Identifier("adventura", "wall"), '0', Color::BRIGHT_BLACK, BlockSettingsBuilder().collidable().build());
+    Block SPIKE = Block(Identifier("adventura", "spike"), '^', Color::BRIGHT_RED, BlockSettingsBuilder().lethal().build());
 
     BlockRegistry() {
         registerBlock(AIR);
+        registerBlock(WATER);
         registerBlock(PLATFORM);
         registerBlock(LADDER);
         registerBlock(START);
-        registerBlock(GOAL);   
+        registerBlock(GOAL);
+        registerBlock(WALL);
+        registerBlock(SPIKE);
     }
 
     const Block getByEncoding(char encoding) {

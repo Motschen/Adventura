@@ -4,8 +4,14 @@ class BlockSettings {
         bool isSolid() {
             return isSolid_;
         }
+        bool hasCollision() {
+            return hasCollision_;
+        }
         bool isMovable() {
             return isMovable_;
+        }
+        bool isLethal() {
+            return isLethal_;
         }
         bool isClimbableFromTop() {
             return isClimbableFromTop_;
@@ -20,6 +26,12 @@ class BlockSettings {
         void setMovable(bool isMovable) {
             this->isMovable_ = isMovable;
         }
+        void setCollision(bool hasCollision) {
+            this->hasCollision_ = hasCollision;
+        }
+        void setLethal(bool isLethal) {
+            this->isLethal_ = isLethal;
+        }
         void setClimbableFromTop(bool isClimbableFromTop) {
             this->isClimbableFromTop_ = isClimbableFromTop;
         }
@@ -32,6 +44,8 @@ class BlockSettings {
         bool isMovable_ = false;
         bool isClimbableFromTop_ = false;
         bool isClimbableFromBottom_ = false;
+        bool isLethal_ = false;
+        bool hasCollision_ = false;
 };
 class BlockSettingsBuilder {
     public:
@@ -41,6 +55,14 @@ class BlockSettingsBuilder {
         }
         BlockSettingsBuilder movable() {
             blockSettings.setMovable(true);
+            return *this;
+        }
+        BlockSettingsBuilder collidable() {
+            blockSettings.setCollision(true);
+            return *this;
+        }
+        BlockSettingsBuilder lethal() {
+            blockSettings.setLethal(true);
             return *this;
         }
         BlockSettingsBuilder climbableFromTop() {

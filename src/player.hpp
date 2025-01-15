@@ -30,6 +30,8 @@ public:
         }
         this->pos = pos;
 
+        if (world.getBlockAt(pos) == world.getBlockRegistry().GOAL) reachedGoal = true;
+
         isFreeFalling = !world.getBlockAt(pos+BlockPos(0, 2)).getSettings().isSolid();
         if (isFreeFalling) {
             move(BlockPos(0, 1));
@@ -37,9 +39,14 @@ public:
             if (fallLength > 5) alive = false;
         }
         else fallLength = 0;
+
+        if (world.getBlockAt(pos+BlockPos(0, 2)).getSettings().isLethal()) alive = false;
     }
     bool isAlive() {
         return alive;
+    }
+    bool hasReachedGoal() {
+        return reachedGoal;
     }
     vector<vector<char>> mapToWorldspace() {
         vector<vector<char>> map;
@@ -69,5 +76,6 @@ private:
     BlockPos pos = BlockPos(0, 0);
     bool alive = true;
     bool isFreeFalling = false;
+    bool reachedGoal = false;
     int fallLength = 0;
 };
