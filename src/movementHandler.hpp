@@ -29,8 +29,14 @@ bool onInput(char lastChar, World& world, Player& player) {
     }
 }
 bool tryWalk(World& world, Player& player, bool left) {
-    if (!world.getBlockAt(player.getPos()+(left ? BlockPos(-1, 1) : BlockPos(1, 1))).getSettings().hasCollision()) {
-        player.move(left ? BlockPos(-1, 0) : BlockPos(1,0));
+    BlockPos neighbourPosTorso = player.getPos()+(left ? BlockPos(-1, 0) : BlockPos(1, 0));
+    BlockPos neighbourPosFeet = player.getPos()+(left ? BlockPos(-1, 1) : BlockPos(1, 1));
+    if (!world.getBlockAt(neighbourPosFeet).getSettings().hasCollision()) {
+        player.setPos(neighbourPosTorso);
+        return true;
+    }
+    else if (!left && world.getBlockAt(neighbourPosFeet).getSettings().hasCollision() && !world.getBlockAt(neighbourPosTorso).getSettings().isSolid()) {
+        left ? player.move(-1, -1) : player.move(1, -1);
         return true;
     }
     return false;
@@ -45,14 +51,6 @@ bool tryGoDown(World& world, Player& player) {
 bool tryGoUp(World& world, Player& player) {
     if (world.getBlockAt(player.getPos()+BlockPos(0, 1)).getSettings().isClimbableFromBottom() || world.getBlockAt(player.getPos()+BlockPos(0, 2)).getSettings().isClimbableFromBottom()) {
         player.move(0, -1);
-        return true;
-    }
-    else if (world.getBlockAt(player.getPos()+BlockPos(1, 1)).getSettings().hasCollision() && !world.getBlockAt(player.getPos()+BlockPos(1, 0)).getSettings().isSolid()) {
-        player.move(1, -1);
-        return true;
-    }
-    else if (world.getBlockAt(player.getPos()+BlockPos(-1, 1)).getSettings().hasCollision() && !world.getBlockAt(player.getPos()+BlockPos(-1, 0)).getSettings().isSolid()) {
-        player.move(-1, -1);
         return true;
     }
     return false;

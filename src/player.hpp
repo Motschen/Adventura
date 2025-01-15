@@ -32,13 +32,17 @@ public:
 
         if (world.getBlockAt(pos) == world.getBlockRegistry().GOAL) reachedGoal = true;
 
+        
         isFreeFalling = !world.getBlockAt(pos+BlockPos(0, 2)).getSettings().isSolid();
         if (isFreeFalling) {
-            move(BlockPos(0, 1));
             fallLength += 1;
-            if (fallLength > 5) alive = false;
+            if (world.getBlockAt(pos+BlockPos(0, 2)) == world.getBlockRegistry().WATER) fallLength = 0;
+            move(BlockPos(0, 1));
         }
-        else fallLength = 0;
+        else {
+            if (fallLength > 5) alive = false;
+            fallLength = 0;
+        }
 
         if (world.getBlockAt(pos+BlockPos(0, 2)).getSettings().isLethal()) alive = false;
     }

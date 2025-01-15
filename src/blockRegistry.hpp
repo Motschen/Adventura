@@ -32,7 +32,8 @@ public:
         for (Block block : registeredBlocks) {
             if (block.getEncoding() == encoding) return block;
         }
-        return AIR;
+        if (encoding == '/' || encoding == '\\' || encoding == '|' || encoding == 'o') return AIR; // The static player defined in the level should not be part of the world
+        return Block(Identifier("decoration", string(1, encoding)), encoding, BlockSettingsBuilder().nonSolid().build()); // Keep other characters as decoration
     }
 
 private:
