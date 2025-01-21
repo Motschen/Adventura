@@ -7,8 +7,11 @@ class BlockSettings {
         bool hasCollision() {
             return hasCollision_;
         }
-        bool isMovable() {
-            return isMovable_;
+        bool hasGravity() {
+            return hasGravity_;
+        }
+        bool isPushable() {
+            return isPushable_;
         }
         bool isLethal() {
             return isLethal_;
@@ -23,11 +26,14 @@ class BlockSettings {
         void setSolid(bool isSolid) {
             this->isSolid_ = isSolid;
         }
-        void setMovable(bool isMovable) {
-            this->isMovable_ = isMovable;
+        void setPushable(bool isMovable) {
+            this->isPushable_ = isMovable;
         }
         void setCollision(bool hasCollision) {
             this->hasCollision_ = hasCollision;
+        }
+        void setGravity(bool hasGravity) {
+            this->hasGravity_ = hasGravity;
         }
         void setLethal(bool isLethal) {
             this->isLethal_ = isLethal;
@@ -41,11 +47,12 @@ class BlockSettings {
 
     private:
         bool isSolid_ = true;
-        bool isMovable_ = false;
+        bool isPushable_ = false;
         bool isClimbableFromTop_ = false;
         bool isClimbableFromBottom_ = false;
         bool isLethal_ = false;
         bool hasCollision_ = false;
+        bool hasGravity_ = false;
 };
 class BlockSettingsBuilder {
     public:
@@ -53,12 +60,16 @@ class BlockSettingsBuilder {
             blockSettings.setSolid(false);
             return *this;
         }
-        BlockSettingsBuilder movable() {
-            blockSettings.setMovable(true);
+        BlockSettingsBuilder pushable() {
+            blockSettings.setPushable(true);
             return *this;
         }
         BlockSettingsBuilder collidable() {
             blockSettings.setCollision(true);
+            return *this;
+        }
+        BlockSettingsBuilder gravity() {
+            blockSettings.setGravity(true);
             return *this;
         }
         BlockSettingsBuilder lethal() {

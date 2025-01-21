@@ -16,6 +16,7 @@ public:
     Block GOAL = Block(Identifier("adventura", "goal"), 'O', Color::BRIGHT_GREEN, BlockSettingsBuilder().nonSolid().build());
     Block WALL = Block(Identifier("adventura", "wall"), '0', Color::BRIGHT_BLACK, BlockSettingsBuilder().collidable().build());
     Block SPIKE = Block(Identifier("adventura", "spike"), '^', Color::BRIGHT_RED, BlockSettingsBuilder().lethal().build());
+    Block BOX = Block(Identifier("adventura", "box"), 'x', Color::BRIGHT_CYAN, BlockSettingsBuilder().pushable().collidable().gravity().build());
 
     BlockRegistry() {
         registerBlock(AIR);
@@ -26,6 +27,7 @@ public:
         registerBlock(GOAL);
         registerBlock(WALL);
         registerBlock(SPIKE);
+        registerBlock(BOX);
     }
 
     const Block getByEncoding(char encoding) {

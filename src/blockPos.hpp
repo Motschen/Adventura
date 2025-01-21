@@ -22,6 +22,9 @@ public:
     bool isNegative() {
         return x < 0 || y < 0;
     }
+    BlockPos add(int x, int y) {
+        return BlockPos(this->x + x, this->y + y);
+    }
     BlockPos operator+(BlockPos offset) {
         return BlockPos(this->getX() + offset.getX(), this->getY() + offset.getY());
     }

@@ -11,7 +11,7 @@ public:
             {' ', 'o', ' '},
             {'/', '|', '\\'},
             {'/', ' ', '\\'}
-        }};       // Player pos is at the bottom center
+        }};       // Player pos is at the center '|' char
     }
     
     BlockPos getPos() {
@@ -32,19 +32,19 @@ public:
 
         if (world.getBlockAt(pos) == world.getBlockRegistry().GOAL) reachedGoal = true;
 
-        
-        isFreeFalling = !world.getBlockAt(pos+BlockPos(0, 2)).getSettings().isSolid();
+        if (world.getBlockAt(pos.add(0, 2)) == world.getBlockRegistry().WATER) fallLength = 0;
+
+        isFreeFalling = !world.getBlockAt(pos.add(0, 2)).getSettings().isSolid();
         if (isFreeFalling) {
             fallLength += 1;
-            if (world.getBlockAt(pos+BlockPos(0, 2)) == world.getBlockRegistry().WATER) fallLength = 0;
-            move(BlockPos(0, 1));
+            move(0, 1);
         }
         else {
             if (fallLength > 5) alive = false;
             fallLength = 0;
         }
 
-        if (world.getBlockAt(pos+BlockPos(0, 2)).getSettings().isLethal()) alive = false;
+        if (world.getBlockAt(pos.add(0, 2)).getSettings().isLethal()) alive = false;
     }
     bool isAlive() {
         return alive;
@@ -75,7 +75,7 @@ public:
     }
 
 private:
-    World world;
+    World& world;
     std::array<std::array<char, 3>, 3> playerTexture;
     BlockPos pos = BlockPos(0, 0);
     bool alive = true;
