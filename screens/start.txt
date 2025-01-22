@@ -1,0 +1,6 @@
+  o   Das ist Paul. 
+ /|\  Er wurde von seinen Freundinnen und Freunden zu einer Beachparty eingeladen.
+ / \  Da er (wieder einmal) verschlafen hat, muss er zu Fuß gehen.
+
+ Steuere Paul, indem du eine der Tasten WASD und danach jeweils Enter drückst.
+ Probiere es jetzt aus!

@@ -16,6 +16,9 @@ class BlockSettings {
         bool isLethal() {
             return isLethal_;
         }
+        bool isBrittle() {
+            return isBrittle_;
+        }
         bool isClimbableFromTop() {
             return isClimbableFromTop_;
         }
@@ -23,27 +26,7 @@ class BlockSettings {
             return isClimbableFromBottom_;
         }
 
-        void setSolid(bool isSolid) {
-            this->isSolid_ = isSolid;
-        }
-        void setPushable(bool isMovable) {
-            this->isPushable_ = isMovable;
-        }
-        void setCollision(bool hasCollision) {
-            this->hasCollision_ = hasCollision;
-        }
-        void setGravity(bool hasGravity) {
-            this->hasGravity_ = hasGravity;
-        }
-        void setLethal(bool isLethal) {
-            this->isLethal_ = isLethal;
-        }
-        void setClimbableFromTop(bool isClimbableFromTop) {
-            this->isClimbableFromTop_ = isClimbableFromTop;
-        }
-        void setClimbableFromBottom(bool isClimbableFromBottom) {
-            this->isClimbableFromBottom_ = isClimbableFromBottom;
-        }
+        friend class BlockSettingsBuilder;
 
     private:
         bool isSolid_ = true;
@@ -51,37 +34,42 @@ class BlockSettings {
         bool isClimbableFromTop_ = false;
         bool isClimbableFromBottom_ = false;
         bool isLethal_ = false;
+        bool isBrittle_ = false;
         bool hasCollision_ = false;
         bool hasGravity_ = false;
 };
 class BlockSettingsBuilder {
     public:
         BlockSettingsBuilder nonSolid() {
-            blockSettings.setSolid(false);
+            blockSettings.isSolid_ = false;
             return *this;
         }
         BlockSettingsBuilder pushable() {
-            blockSettings.setPushable(true);
+            blockSettings.isPushable_ = true;
             return *this;
         }
         BlockSettingsBuilder collidable() {
-            blockSettings.setCollision(true);
+            blockSettings.hasCollision_ = true;
             return *this;
         }
         BlockSettingsBuilder gravity() {
-            blockSettings.setGravity(true);
+            blockSettings.hasGravity_ = true;
             return *this;
         }
         BlockSettingsBuilder lethal() {
-            blockSettings.setLethal(true);
+            blockSettings.isLethal_ = true;
+            return *this;
+        }
+        BlockSettingsBuilder brittle() {
+            blockSettings.isBrittle_ = true;
             return *this;
         }
         BlockSettingsBuilder climbableFromTop() {
-            blockSettings.setClimbableFromTop(true);
+            blockSettings.isClimbableFromTop_ = true;
             return *this;
         }
         BlockSettingsBuilder climbableFromBottom() {
-            blockSettings.setClimbableFromBottom(true);
+            blockSettings.isClimbableFromBottom_ = true;
             return *this;
         }
         BlockSettings build() {

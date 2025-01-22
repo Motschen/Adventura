@@ -2,6 +2,8 @@
 #include <iostream>
 #include <filesystem>
 #include <algorithm>
+#include <thread>
+#include <chrono>
 
 #include "world.hpp"
 #include "player.hpp"
@@ -28,10 +30,21 @@ bool startWorld(string worldFile);
  */
 int main(int argc, char *argv[]) {
     if (argc > 1) {
-        if (!startWorld("./worlds/" + string(argv[1]))) return 0;
+        for (int i = 1; i < argc; i++) {
+            string arg = string(argv[i]);
+            if (arg == "-h" || arg == "--help") {
+                printFile("./screens/help.txt", Color::BRIGHT_BLUE);
+                return 0;
+            }
+            if ((arg == "-l" || arg == "--level") && argc > i + 1 && !startWorld("./worlds/" + string(argv[i+1]))) return 0;
+        }
+        
     }
     else {
+        printFile("./screens/start.txt", Color::BRIGHT_YELLOW);
+        waitForInput();
         vector<string> worlds;
+        // Iterate over all files in the worlds directory
         for (auto & entry : fs::directory_iterator("./worlds")) {
             worlds.push_back(entry.path());
         }
@@ -39,9 +52,11 @@ int main(int argc, char *argv[]) {
         std::sort( worlds.begin(), worlds.end(), [](string a, string b) {
             return a < b;
         });
+        // Load every world in order
         for (const auto & world : worlds)
             if (!startWorld(world)) return 0;
     }
+    // Print the victory screen once all levels have been completed
     printFile("./screens/victory.txt", Color::BRIGHT_GREEN);
 
     return 0;
@@ -69,6 +84,7 @@ bool startWorld(string worldFile) {
     if (!player.isAlive()) printFile("./screens/death.txt", Color::BRIGHT_RED);
     return player.hasReachedGoal();
 }
+
 /**
  * Move the console cursor up by one line.
  * Used to overwrite the previous line.
@@ -87,9 +103,7 @@ void jumpBackOneLine() {
  * @param world Reference to the World object representing the game's world.
  * @param player Reference to the Player object representing the player's state.
  */
-
 void redraw(World &world, Player &player) {
-    //std::this_thread::sleep_for(std::chrono::seconds(1));
     for (unsigned int y = 0; y <= world.getMaxY()+1; y++) {
         jumpBackOneLine();
     }
@@ -119,6 +133,7 @@ void render(World &world, Player &player) {
         cout << endl;
     }
 }
+
 /**
  * Prints the content of a file line by line onto the console,
  * in the specified color.

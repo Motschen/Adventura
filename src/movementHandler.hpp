@@ -5,7 +5,13 @@
 bool tryWalk(World& world, Player& player, bool left);
 bool tryGoDown(World& world, Player& player);
 bool tryGoUp(World& world, Player& player);
-bool tryPushBlock(BlockPos& blockPos, World& world, bool left);
+void tryPushBlock(BlockPos& blockPos, World& world, bool left);
+void tryBlockGravity(BlockPos& blockPos, World& world);
+
+void waitForInput() {
+    char lastChar = ' ';
+    while (lastChar == ' ') cin >> lastChar;
+}
 
 /**
  * Processes the player's input and attempts to move the player in the game world
@@ -54,11 +60,13 @@ bool onInput(char lastChar, World& world, Player& player) {
  * @return true if the player's position was successfully updated, false otherwise.
  */
 bool tryWalk(World& world, Player& player, bool left) {
-    BlockPos neighbourPosTorso = player.getPos()+(left ? BlockPos(-1, 0) : BlockPos(1, 0));
-    BlockPos neighbourPosFeet = player.getPos()+(left ? BlockPos(-1, 1) : BlockPos(1, 1));
+    BlockPos playerPos = player.getPos();
+    BlockPos neighbourPosTorso = playerPos+(left ? BlockPos(-1, 0) : BlockPos(1, 0));
+    BlockPos neighbourPosFeet = playerPos+(left ? BlockPos(-1, 1) : BlockPos(1, 1));
     tryPushBlock(neighbourPosFeet, world, left);
     if (!world.getBlockAt(neighbourPosFeet).getSettings().hasCollision()) {
         player.setPos(neighbourPosTorso);
+        tryBlockGravity(playerPos, world);
         return true;
     }
     else if (world.getBlockAt(neighbourPosFeet).getSettings().hasCollision() && !world.getBlockAt(neighbourPosTorso).getSettings().isSolid()) {
@@ -103,17 +111,21 @@ bool tryGoUp(World& world, Player& player) {
     }
     return false;
 }
-bool tryPushBlock(BlockPos& blockPos, World& world, bool left) {
+void tryPushBlock(BlockPos& blockPos, World& world, bool left) {
     BlockPos neighbourBlockPos = blockPos+(left ? BlockPos(-1, 0) : BlockPos(1, 0));
     if (world.getBlockAt(blockPos).getSettings().isPushable()) { 
         if (world.getBlockAt(neighbourBlockPos).getSettings().isPushable()) {
-            tryPushBlock(neighbourBlockPos, world, left);
+            tryPushBlock(neighbourBlockPos, world, left); // If multiple boxes are next to each other, handle the furthest one first
         }
-        if (world.getBlockAt(neighbourBlockPos) == world.getBlockRegistry().AIR) {
+        if (world.getBlockAt(neighbourBlockPos) == world.getBlockRegistry().AIR) { // Push the box by swapping the blocks
             world.setBlockAt(neighbourBlockPos, world.getBlockAt(blockPos));
             world.setBlockAt(blockPos, world.getBlockRegistry().AIR);
-            return true;
         }
     }
-    return false;
+}
+void tryBlockGravity(BlockPos& playerPos, World& world) {
+    if (world.getBlockAt(playerPos.add(0, 2)).getSettings().hasGravity() && world.getBlockAt(playerPos.add(0, 3)) == world.getBlockRegistry().AIR) {
+        world.setBlockAt(playerPos.add(0, 3), world.getBlockAt(playerPos.add(0, 2)));
+        world.setBlockAt(playerPos.add(0, 2), world.getBlockRegistry().AIR);
+    }
 }

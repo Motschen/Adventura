@@ -1,7 +1,8 @@
+Welt 4: In der Klemme
 
-   o
-S /|\             
-  / \
+    
+S                 
+     
   ---
    0       
    0           x  x       

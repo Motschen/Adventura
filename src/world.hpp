@@ -34,7 +34,7 @@ public:
         for (unsigned int y = 0; y < file.size(); y++) {
             for (unsigned int x = 0; x < file.at(y).size(); x++) {
                 setBlockAt(BlockPos(x, y), blockRegistry.getByEncoding(file.at(y).at(x)));
-                if (file.at(y).at(x) == '|') startPos = BlockPos(x, y);
+                if (file.at(y).at(x) == 'S') startPos = BlockPos(x+3, y);
                 if (x > maxX) maxX = x;
             }
             if (y > maxY) maxY = y;
