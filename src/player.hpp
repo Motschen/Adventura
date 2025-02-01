@@ -1,17 +1,17 @@
 #pragma once
 #include <array>
+#include <thread>
+#include <chrono>
+
 #include "blockPos.hpp"
+#include "output.hpp"
 
 class Player {
 public:
     Player(BlockPos pos, World& world) : world(world) {
         this->pos = pos;
         this->world = world;
-        playerTexture = {{
-            {' ', 'o', ' '},
-            {'/', '|', '\\'},
-            {'/', ' ', '\\'}
-        }};       // Player pos is at the center '|' char
+        playerTexture = REGULAR_PLAYER_TEXTURE;
     }
     
     BlockPos getPos() {
@@ -37,11 +37,15 @@ public:
         isFreeFalling = !world.getBlockAt(pos.add(0, 2)).getSettings().isSolid();
         if (isFreeFalling) {
             fallLength += 1;
+            if (fallLength > 2) playerTexture = FALLING_PLAYER_TEXTURE;
+            redraw(world, this->mapToWorldspace());
+            std::this_thread::sleep_for(std::chrono::milliseconds(100 / fallLength + 50));
             move(0, 1);
         }
         else {
             if (fallLength > 5) alive = false;
             fallLength = 0;
+            playerTexture = REGULAR_PLAYER_TEXTURE;
         }
 
         if (world.getBlockAt(pos.add(0, 2)).getSettings().isLethal()) alive = false;
@@ -82,4 +86,17 @@ private:
     bool isFreeFalling = false;
     bool reachedGoal = false;
     int fallLength = 0;
+
+    const std::array<std::array<char, 3>, 3> REGULAR_PLAYER_TEXTURE {{
+        {' ', 'o', ' '},
+        {'/', '|', '\\'},
+        {'/', ' ', '\\'}
+        }       // Player pos is at the center '|' char
+    };
+    const std::array<std::array<char, 3>, 3> FALLING_PLAYER_TEXTURE {{
+        {'\\', 'o', '/'},
+        {' ', '|', ' '},
+        {'/', ' ', '\\'}
+        }       // Player pos is at the center '|' char
+    };
 };

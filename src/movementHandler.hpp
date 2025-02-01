@@ -1,6 +1,10 @@
+#pragma once
+#include <array>
+
 #include "player.hpp"
 #include "world.hpp"
 #include "blockRegistry.hpp"
+#include "output.hpp"
 
 bool tryWalk(World& world, Player& player, bool left);
 bool tryGoDown(World& world, Player& player);
@@ -8,10 +12,32 @@ bool tryGoUp(World& world, Player& player);
 void tryPushBlock(BlockPos& blockPos, World& world, bool left);
 void tryBlockGravity(BlockPos& blockPos, World& world);
 
+/**
+ * Checks if a given value is in a parameter pack of values.
+ *
+ * This is a C++17 implementation of a function that checks if a given value
+ * is in a parameter pack of values. This is useful for checking if a value is
+ * in a list of values without having to write a bunch of repetitive code.
+ * Source: https://stackoverflow.com/a/15181949
+ *
+ * @param first The value to search for.
+ * @param t The parameter pack of values to search in.
+ * @return true if the value is found in the parameter pack, false otherwise.
+ */
+template<typename First, typename ... T>
+bool is_in(First &&first, T && ... t) {
+    return ((first == t) || ...);
+}
+
+/**
+ * Waits until the user enters a key.
+ * Used to prompt the user to press any key to continue.
+ */
 void waitForInput() {
     char lastChar = ' ';
-    while (lastChar == ' ') cin >> lastChar;
+    while (!is_in(lastChar, 'w', 'a', 's', 'd')) cin >> lastChar;
 }
+
 
 /**
  * Processes the player's input and attempts to move the player in the game world
@@ -46,6 +72,7 @@ bool onInput(char lastChar, World& world, Player& player) {
         default: return false;
     }
 }
+
 /**
  * Attempts to move the player one block to the left or right.
  *
@@ -75,6 +102,7 @@ bool tryWalk(World& world, Player& player, bool left) {
     }
     return false;
 }
+
 /**
  * Attempts to move the player one block downwards.
  *
@@ -93,6 +121,7 @@ bool tryGoDown(World& world, Player& player) {
     }
     return false;
 }
+
 /**
  * Attempts to move the player one block upwards.
  *
@@ -111,6 +140,19 @@ bool tryGoUp(World& world, Player& player) {
     }
     return false;
 }
+
+/**
+ * Attempts to push the block at the given position to the left or right.
+ *
+ * Checks if the block at the given position is pushable and if so, tries to push it
+ * to the left or right by swapping it with the block to its left/right.
+ * If the block to the left/right is also pushable, this function will be called
+ * recursively to handle the furthest block first.
+ *
+ * @param blockPos The position of the block to try to push.
+ * @param world Reference to the World object representing the current world.
+ * @param left Whether to push the block to the left (true) or right (false).
+ */
 void tryPushBlock(BlockPos& blockPos, World& world, bool left) {
     BlockPos neighbourBlockPos = blockPos+(left ? BlockPos(-1, 0) : BlockPos(1, 0));
     if (world.getBlockAt(blockPos).getSettings().isPushable()) { 
@@ -123,9 +165,47 @@ void tryPushBlock(BlockPos& blockPos, World& world, bool left) {
         }
     }
 }
+
+/**
+ * Checks if the block below the player's feet has gravity and if so,
+ * moves it down one block if possible.
+ *
+ * @param playerPos The position of the player.
+ * @param world Reference to the World object representing the current world.
+ */
 void tryBlockGravity(BlockPos& playerPos, World& world) {
     if (world.getBlockAt(playerPos.add(0, 2)).getSettings().hasGravity() && world.getBlockAt(playerPos.add(0, 3)) == world.getBlockRegistry().AIR) {
         world.setBlockAt(playerPos.add(0, 3), world.getBlockAt(playerPos.add(0, 2)));
         world.setBlockAt(playerPos.add(0, 2), world.getBlockRegistry().AIR);
     }
+}
+
+/**
+ * Listens for the player's input and updates the game state accordingly.
+ * If test mode is enabled, reads input from the file TEST.txt instead of the console.
+ * In this case, the game state is updated every 100 milliseconds (to simulate the player's input).
+ * If the player dies or reaches the goal, exit the loop.
+ */
+void inputLoop(Player& player, World& world, bool testMode, unsigned int worldIndex) {
+    vector<string> testFile = readFileAsVector("TEST.txt");
+    unsigned int inputIndex = 0;
+    while (player.isAlive() && !player.hasReachedGoal()) {
+        string currentInput;
+        if (testMode) {
+            currentInput = testFile[worldIndex][inputIndex];
+            inputIndex++;
+            if (inputIndex > testFile[worldIndex].length()) break;
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+        else cin >> currentInput;
+        if (!testMode) {
+            jumpBackOneLine();
+        }
+
+        for (char lastChar : currentInput) {
+            if (onInput(lastChar, world, player))
+                redraw(world, player.mapToWorldspace());
+        }
+    }
+    inputIndex = 0;
 }

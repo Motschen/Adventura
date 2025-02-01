@@ -1,0 +1,8 @@
+┌────────────────────────────┐
+│       Du hast       ▚▒░▞   │
+│  G E W O N N E N !   ▙▟    │
+│        Yay :)        ▟▙    │
+└────────────────────────────┘
+
+Du hast das Level erfolgreich abgeschlossen.
+Wenn du mehr sehen möchtest, starte das Spiel ohne Kommandozeilenargumente.
