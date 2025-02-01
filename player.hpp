@@ -43,12 +43,17 @@ public:
             move(0, 1);
         }
         else {
-            if (fallLength > 5) alive = false;
-            fallLength = 0;
             playerTexture = REGULAR_PLAYER_TEXTURE;
+            if (fallLength > 5) unalive();
+            fallLength = 0;
         }
 
-        if (world.getBlockAt(pos.add(0, 2)).getSettings().isLethal()) alive = false;
+        if (world.getBlockAt(pos.add(0, 2)).getSettings().isLethal()) unalive();
+    }
+    void unalive() {
+        playerTexture = DEAD_PLAYER_TEXTURE;
+        redraw(world, this->mapToWorldspace());
+        alive = false;
     }
     bool isAlive() {
         return alive;
@@ -91,12 +96,16 @@ private:
         {' ', 'o', ' '},
         {'/', '|', '\\'},
         {'/', ' ', '\\'}
-        }       // Player pos is at the center '|' char
-    };
+        // Player pos is at the center '|' char
+    }};
     const std::array<std::array<char, 3>, 3> FALLING_PLAYER_TEXTURE {{
         {'\\', 'o', '/'},
         {' ', '|', ' '},
         {'/', ' ', '\\'}
-        }       // Player pos is at the center '|' char
-    };
+    }};
+    const std::array<std::array<char, 3>, 3> DEAD_PLAYER_TEXTURE {{
+        {' ', ' ', ' '},
+        {'/', '-', 'X'},
+        {'/', ' ', '\\'}
+    }};
 };

@@ -37,13 +37,15 @@ string readInput(string feedback) {
  * This is used to progress through the worlds in the correct order.
  * 
  * @param dir The directory to get the file names from
+ * @param extension The file extension to filter by
  * @return A list of all file names in the specified directory, sorted alphabetically.
  */
-vector<string> getOrderedFileNames(string dir) {
+vector<string> getOrderedFileNames(string dir, string extension) {
     vector<string> worlds;
-    // Iterate over all files in the worlds directory
+    // This used to be so elegant and iterate over all files in the worlds directory,
+    // but because of the weird restriction with no folders being allowed, we just filter the files based on their extension.
     for (auto & entry : std::filesystem::directory_iterator(dir)) {
-        worlds.push_back(entry.path());
+        if (static_cast<string>(entry.path()).ends_with(extension)) worlds.push_back(entry.path());
     }
     // We use this to sort the worlds alphabetically, so that the game progresses in the correct order.
     std::sort( worlds.begin(), worlds.end(), [](string a, string b) {

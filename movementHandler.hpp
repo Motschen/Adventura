@@ -6,9 +6,6 @@
 #include "blockRegistry.hpp"
 #include "output.hpp"
 
-bool tryWalk(World& world, Player& player, bool left);
-bool tryGoDown(World& world, Player& player);
-bool tryGoUp(World& world, Player& player);
 void tryPushBlock(BlockPos& blockPos, World& world, bool left);
 void tryBlockGravity(BlockPos& blockPos, World& world);
 
@@ -36,41 +33,6 @@ bool is_in(First &&first, T && ... t) {
 void waitForInput() {
     char lastChar = ' ';
     while (!is_in(lastChar, 'w', 'a', 's', 'd')) cin >> lastChar;
-}
-
-
-/**
- * Processes the player's input and attempts to move the player in the game world
- * based on the input character. Supports moving up, left, down, or right
- * using the keys 'w', 'a', 's', 'd' as well as their upper-case equivalents (useful in case caps lock is pressed by accident).
- *
- * @param lastChar The character input representing the player's movement command.
- * @param world Reference to the World object representing the game's world.
- * @param player Reference to the Player object representing the player's state.
- * @return true if the player's position was successfully updated, false otherwise.
- */
-
-bool onInput(char lastChar, World& world, Player& player) {
-    switch (lastChar) {
-        case ' ':
-        case 'w':
-        case 'W':
-            return tryGoUp(world, player);
-
-        case 'a':
-        case 'A':
-            return tryWalk(world, player, true);
-
-        case 's':
-        case 'S':
-            return tryGoDown(world, player);
-
-        case 'd':
-        case 'D':
-            return tryWalk(world, player, false);
-        
-        default: return false;
-    }
 }
 
 /**
@@ -177,6 +139,40 @@ void tryBlockGravity(BlockPos& playerPos, World& world) {
     if (world.getBlockAt(playerPos.add(0, 2)).getSettings().hasGravity() && world.getBlockAt(playerPos.add(0, 3)) == world.getBlockRegistry().AIR) {
         world.setBlockAt(playerPos.add(0, 3), world.getBlockAt(playerPos.add(0, 2)));
         world.setBlockAt(playerPos.add(0, 2), world.getBlockRegistry().AIR);
+    }
+}
+
+/**
+ * Processes the player's input and attempts to move the player in the game world
+ * based on the input character. Supports moving up, left, down, or right
+ * using the keys 'w', 'a', 's', 'd' as well as their upper-case equivalents (useful in case caps lock is pressed by accident).
+ *
+ * @param lastChar The character input representing the player's movement command.
+ * @param world Reference to the World object representing the game's world.
+ * @param player Reference to the Player object representing the player's state.
+ * @return true if the player's position was successfully updated, false otherwise.
+ */
+
+bool onInput(char lastChar, World& world, Player& player) {
+    switch (lastChar) {
+        case ' ':
+        case 'w':
+        case 'W':
+            return tryGoUp(world, player);
+
+        case 'a':
+        case 'A':
+            return tryWalk(world, player, true);
+
+        case 's':
+        case 'S':
+            return tryGoDown(world, player);
+
+        case 'd':
+        case 'D':
+            return tryWalk(world, player, false);
+        
+        default: return false;
     }
 }
 

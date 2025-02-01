@@ -15,7 +15,6 @@ using std::cout;
 using std::endl;
 
 bool startWorld(string worldFile);
-vector<string> getOrderedFileNames(string dir);
 
 bool testMode = false;
 unsigned int worldIndex = 2;
@@ -40,27 +39,27 @@ int main(int argc, char *argv[]) {
                 if (!startWorld("./worlds/" + string(argv[i+1])))
                     return 0; // Load only the specified world
                 else
-                    printFile("./screens/completed_single_level.txt", Color::BRIGHT_GREEN);
+                    printFile("./completed_single_level.screen.txt", Color::BRIGHT_GREEN);
                 return 0;
             }
         }
         if (!testMode) {
-            printFile("./screens/help.txt", Color::BRIGHT_BLUE); // Print help screen
+            printFile("./help.screen.txt", Color::BRIGHT_BLUE); // Print help screen
             return 0;
         }
     }
     if (!testMode) {
-        printFile("./screens/start.txt", Color::BRIGHT_YELLOW);
+        printFile("./start.screen.txt", Color::BRIGHT_YELLOW);
         waitForInput();
         printGuide();
         waitForInput();
     }
     
     // Load every world in order
-    for (const auto & world : getOrderedFileNames("./worlds"))
+    for (const auto & world : getOrderedFileNames("./", ".world.txt"))
         if (!startWorld(world)) return 0;
     // Print the victory screen once all levels have been completed
-    printFile("./screens/victory.txt", Color::BRIGHT_GREEN);
+    printFile("./victory.screen.txt", Color::BRIGHT_GREEN);
 
     return 0;
 }
@@ -82,6 +81,6 @@ bool startWorld(string worldFile) {
     inputLoop(player, world, testMode, worldIndex);
 
     worldIndex++;
-    if (!player.isAlive()) printFile("./screens/death.txt", Color::BRIGHT_RED);
+    if (!player.isAlive()) printFile("./death.screen.txt", Color::BRIGHT_RED);
     return player.hasReachedGoal();
 }

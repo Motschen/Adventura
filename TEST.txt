@@ -1,4 +1,4 @@
-Führe das Programm mit dem Argument --test aus
+Für einen automatisierten Test, führe das Programm mit dem Argument --test aus
 
 asdddddddddddddddwwwwwwddddddwwwwdddd
 aaaaaaassssssddddssssdddddddddddwwwwwddddddwwwwdddddddddddddddddddd

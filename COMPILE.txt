@@ -1,1 +1,2 @@
-g++ -std=c++23 -Wall ./src/main.cpp -o ./build/testCompiled && ./build/testCompiled
+mkdir build
+g++ -std=c++23 -Wall ./main.cpp -o ./build/testCompiled && ./build/testCompiled
