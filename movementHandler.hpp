@@ -27,7 +27,7 @@ bool is_in(First &&first, T && ... t) {
 }
 
 /**
- * Waits until the user enters a key.
+ * Waits until the user enters a valid key.
  * Used to prompt the user to press any key to continue.
  */
 void waitForInput() {

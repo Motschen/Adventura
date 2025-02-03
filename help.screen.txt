@@ -2,4 +2,5 @@ Welcome to Adventura v1.0 by Martin Prokoph!
 
 No Arguments: Play through all levels inside the world folder (in alphabetical order)
 --level, -l <levelName>: Load (only) the specified level
+--test, -t: Automatically play through all levels
 --help, -h: Show this screen

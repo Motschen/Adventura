@@ -32,6 +32,14 @@ public:
         registerBlock(SAND);
     }
 
+    /**
+     * Gets a block by its encoding.
+     * 
+     * If the block is not registered, a non-solid decoration block is created for it.
+     * 
+     * @param encoding The encoding of the block to get.
+     * @return The block with the given encoding.
+     */
     const Block getByEncoding(char encoding) {
         for (Block block : registeredBlocks) {
             if (block.getEncoding() == encoding) return block;

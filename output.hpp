@@ -80,4 +80,5 @@ void printGuide() {
     for (std::pair<string, Color> p : guide) {
         cout << p.second << p.first << endl;
     }
+    cout << endl << Color::RESET << "WASD + Enter -> Spiel starten" << endl;
 }

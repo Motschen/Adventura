@@ -15,6 +15,7 @@ using std::cout;
 using std::endl;
 
 bool startWorld(string worldFile);
+bool parseArgs(int argc, char *argv[]);
 
 bool testMode = false;
 unsigned int worldIndex = 2;
@@ -27,27 +28,8 @@ unsigned int worldIndex = 2;
  * If the player reaches the goal of the final level, print the victory screen and exit.
  */
 int main(int argc, char *argv[]) {
-    if (argc > 1) {
-        for (int i = 1; i < argc; i++) {
-            string arg = string(argv[i]);
-            if (arg == "-h" || arg == "--help") 
-                break;
-            else if (arg == "-t" || arg == "--test") 
-                testMode = true;
-            
-            else if ((arg == "-l" || arg == "--level") && argc > i + 1) {
-                if (!startWorld("./worlds/" + string(argv[i+1])))
-                    return 0; // Load only the specified world
-                else
-                    printFile("./completed_single_level.screen.txt", Color::BRIGHT_GREEN);
-                return 0;
-            }
-        }
-        if (!testMode) {
-            printFile("./help.screen.txt", Color::BRIGHT_BLUE); // Print help screen
-            return 0;
-        }
-    }
+    if (parseArgs(argc, argv)) return 0;
+    
     if (!testMode) {
         printFile("./start.screen.txt", Color::BRIGHT_YELLOW);
         waitForInput();
@@ -83,4 +65,44 @@ bool startWorld(string worldFile) {
     worldIndex++;
     if (!player.isAlive()) printFile("./death.screen.txt", Color::BRIGHT_RED);
     return player.hasReachedGoal();
+}
+
+/**
+ * Parses command-line arguments to set the game's configuration.
+ * 
+ * Recognizes the following arguments:
+ * - "-h" or "--help": Displays the help screen and exits.
+ * - "-t" or "--test": Enables test mode, starting an automated playthrough.
+ * - "-l" or "--level <levelName>": Loads and plays only the specified level. 
+ * 
+ * If a custom action is specified, the function returns true to indicate
+ * immediate termination after executing the requested action.
+ * 
+ * @param argc The number of command-line arguments.
+ * @param argv The array containing the command-line arguments.
+ * @return true if the program should exit after handling the arguments, false otherwise.
+ */
+bool parseArgs(int argc, char *argv[]) {
+    if (argc > 1) {
+        for (int i = 1; i < argc; i++) {
+            string arg = string(argv[i]);
+            if (arg == "-h" || arg == "--help") 
+                break;
+            else if (arg == "-t" || arg == "--test") 
+                testMode = true;
+            
+            else if ((arg == "-l" || arg == "--level") && argc > i + 1) {
+                if (!startWorld("./" + string(argv[i+1])))
+                    return true; // Load only the specified world
+                else
+                    printFile("./completed_single_level.screen.txt", Color::BRIGHT_GREEN);
+                return true;
+            }
+        }
+        if (!testMode) {
+            printFile("./help.screen.txt", Color::BRIGHT_BLUE); // Print help screen
+            return true;
+        }
+    }
+    return false;
 }
