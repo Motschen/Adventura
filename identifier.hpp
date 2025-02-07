@@ -8,7 +8,17 @@ public:
     std::string nameSpace;
     std::string path;
 
-    Identifier(std::string nameSpace, std::string path) : nameSpace(nameSpace), path(path) {}
+
+    /**
+     * Construct a new Identifier.
+     * Identifiers are used to uniquely identify blocks, regardless of their encoding.
+     * 
+     * @param nameSpace The namespace of the Identifier.
+     * @param path The path of the Identifier.
+     */
+    Identifier(std::string nameSpace, std::string path) : nameSpace(nameSpace), path(path) {
+        
+    }
 
     std::ostream& operator<<(std::ostream& out) {
         out << nameSpace << ":" << path;

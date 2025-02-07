@@ -1,2 +1,1 @@
-mkdir build
-g++ -std=c++23 -Wall ./main.cpp -o ./build/testCompiled && ./build/testCompiled
+g++ -std=c++23 -Wall ./main.cpp -o ./adventura && ./adventura

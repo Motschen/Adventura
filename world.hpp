@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <array>
-#include "fileutils.hpp"
+#include "fileUtils.hpp"
 #include "block.hpp"
 #include "blockRegistry.hpp"
 #include "blockPos.hpp"

@@ -19,6 +19,9 @@ public:
     Block BOX = Block(Identifier("adventura", "box"), 'x', Color::BRIGHT_CYAN, BlockSettingsBuilder().pushable().collidable().gravity().build());
     Block SAND = Block(Identifier("adventura", "sand"), '*', Color::BRIGHT_YELLOW, BlockSettingsBuilder().brittle().gravity().build());
 
+    /**
+     * Constructor for BlockRegistry. Registers all built-in blocks.
+     */
     BlockRegistry() {
         registerBlock(AIR);
         registerBlock(WATER);
@@ -48,9 +51,13 @@ public:
     }
 
 private:
-    Block registerBlock(Block& block) {
+    /**
+     * Registers a block in the registry.
+     * 
+     * @param block The block to register.
+     */
+    void registerBlock(Block& block) {
         registeredBlocks.push_back(block);
-        return block;
     }
     vector<Block> registeredBlocks;
 };
