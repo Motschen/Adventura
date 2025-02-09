@@ -13,6 +13,6 @@ enum class Color {
     BRIGHT_WHITE= 97
 };
 
-std::ostream& operator<<(std::ostream& os, Color color) {
+static std::ostream& operator<<(std::ostream& os, Color color) {
     return os << "\033[" << static_cast<int>(color) << "m";
 }

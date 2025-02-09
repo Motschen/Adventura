@@ -11,16 +11,16 @@ public:
     /**
      * Initializes a new Player at the specified starting position in the provided world.
      *
-     * @param pos The initial position of the player within the world.
-     * @param world A reference to the World object representing the game world.
+     * @param initialPos The initial position of the player within the world.
+     * @param currentWorld A reference to the World object representing the game world.
      */
-    Player(BlockPos pos, World& world) : world(world) {
-        this->pos = pos;
-        this->world = world;
+    Player(BlockPos initialPos, World& currentWorld) : world(currentWorld) {
+        this->pos = initialPos;
+        this->world = currentWorld;
         playerTexture = REGULAR_PLAYER_TEXTURE;
     }
     
-    /**
+    /*initialP
      * Retrieves the current position of the player in the world.
      *
      * @return The current BlockPos representing the player's position.
@@ -52,20 +52,20 @@ public:
     /**
      * Updates the player's position and checks for any conditions that would update the state of the player.
      * 
-     * @param pos The position to move the player to.
+     * @param newPos The position to move the player to.
      */
-    void setPos(BlockPos pos) {
-        if (!world.containsPos(pos)) {
+    void setPos(BlockPos newPos) {
+        if (!world.containsPos(newPos)) {
             alive = false;
             return;
         }
-        this->pos = pos;
+        this->pos = newPos;
 
-        if (world.getBlockAt(pos) == world.getBlockRegistry().GOAL) reachedGoal = true;
+        if (world.getBlockAt(newPos) == world.getBlockRegistry().GOAL) reachedGoal = true;
 
-        if (world.getBlockAt(pos.add(0, 2)) == world.getBlockRegistry().WATER) fallLength = 0;
+        if (world.getBlockAt(newPos.add(0, 2)) == world.getBlockRegistry().WATER) fallLength = 0;
 
-        isFreeFalling = !world.getBlockAt(pos.add(0, 2)).getSettings().isSolid();
+        isFreeFalling = !world.getBlockAt(newPos.add(0, 2)).getSettings().isSolid();
         if (isFreeFalling) {
             fallLength += 1;
             if (fallLength > 2) playerTexture = FALLING_PLAYER_TEXTURE;
@@ -79,7 +79,7 @@ public:
             fallLength = 0;
         }
 
-        if (world.getBlockAt(pos.add(0, 2)).getSettings().isLethal()) unalive();
+        if (world.getBlockAt(newPos.add(0, 2)).getSettings().isLethal()) unalive();
     }
 
     /**
@@ -121,13 +121,13 @@ public:
                 while (map.size() <= y) map.push_back({});
                 while (map[y].size() <= x) map[y].push_back(' ');
 
-                int yOffset = y-pos.getY() + 1;
-                int xOffset = x-pos.getX() + 1;
+                int yOffset = static_cast<int>(y)-static_cast<int>(pos.getUnsignedY()) + 1;
+                int xOffset = static_cast<int>(x)-static_cast<int>(pos.getUnsignedX()) + 1;
 
                 char encoding = ' ';
-                if (yOffset >= 0 && yOffset < static_cast<int>(playerTexture.size()) && 
-                xOffset >= 0 && xOffset < static_cast<int>(playerTexture.at(yOffset).size())) {
-                    encoding = playerTexture.at(yOffset).at(xOffset);
+                if (yOffset >= 0 && yOffset < (static_cast<int>(static_cast<size_t>(playerTexture.size()))) && 
+                xOffset >= 0 && xOffset < (static_cast<int>(playerTexture.at(static_cast<size_t>(yOffset)).size()))) {
+                    encoding = playerTexture.at(static_cast<unsigned int>(yOffset)).at(static_cast<unsigned int>(xOffset));
                 }
                     
                 map[y][x] = encoding;

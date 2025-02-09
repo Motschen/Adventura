@@ -6,8 +6,8 @@
 #include "blockRegistry.hpp"
 #include "output.hpp"
 
-void tryPushBlock(BlockPos& blockPos, World& world, bool left);
-void tryBlockGravity(BlockPos& blockPos, World& world);
+static void tryPushBlock(BlockPos& blockPos, World& world, bool left);
+static void tryBlockGravity(BlockPos& blockPos, World& world);
 
 /**
  * Checks if a given value is in a parameter pack of values.
@@ -22,7 +22,7 @@ void tryBlockGravity(BlockPos& blockPos, World& world);
  * @return true if the value is found in the parameter pack, false otherwise.
  */
 template<typename First, typename ... T>
-bool is_in(First &&first, T && ... t) {
+static bool is_in(First &&first, T && ... t) {
     return ((first == t) || ...);
 }
 
@@ -30,7 +30,7 @@ bool is_in(First &&first, T && ... t) {
  * Waits until the user enters a valid key.
  * Used to prompt the user to press any key to continue.
  */
-void waitForInput() {
+static void waitForInput() {
     char lastChar = ' ';
     while (!is_in(lastChar, 'w', 'a', 's', 'd')) cin >> lastChar;
 }
@@ -48,7 +48,7 @@ void waitForInput() {
  * @param left Whether to move left (true) or right (false).
  * @return true if the player's position was successfully updated, false otherwise.
  */
-bool tryWalk(World& world, Player& player, bool left) {
+static bool tryWalk(World& world, Player& player, bool left) {
     BlockPos playerPos = player.getPos();
     BlockPos neighbourPosTorso = playerPos+(left ? BlockPos(-1, 0) : BlockPos(1, 0));
     BlockPos neighbourPosFeet = playerPos+(left ? BlockPos(-1, 1) : BlockPos(1, 1));
@@ -76,7 +76,7 @@ bool tryWalk(World& world, Player& player, bool left) {
  * @param player Reference to the Player object representing the player's state.
  * @return true if the player's position was successfully updated, false otherwise.
  */
-bool tryGoDown(World& world, Player& player) {
+static bool tryGoDown(World& world, Player& player) {
     if (world.getBlockAt(player.getPos()+BlockPos(0, 2)).getSettings().isClimbableFromTop() || world.getBlockAt(player.getPos()+BlockPos(0, 3)).getSettings().isClimbableFromTop()) {
         player.move(0, 1);
         return true;
@@ -95,7 +95,7 @@ bool tryGoDown(World& world, Player& player) {
  * @param player Reference to the Player object representing the player's state.
  * @return true if the player's position was successfully updated, false otherwise.
  */
-bool tryGoUp(World& world, Player& player) {
+static bool tryGoUp(World& world, Player& player) {
     if (world.getBlockAt(player.getPos()+BlockPos(0, 1)).getSettings().isClimbableFromBottom() || world.getBlockAt(player.getPos()+BlockPos(0, 2)).getSettings().isClimbableFromBottom()) {
         player.move(0, -1);
         return true;
@@ -115,7 +115,7 @@ bool tryGoUp(World& world, Player& player) {
  * @param world Reference to the World object representing the current world.
  * @param left Whether to push the block to the left (true) or right (false).
  */
-void tryPushBlock(BlockPos& blockPos, World& world, bool left) {
+static void tryPushBlock(BlockPos& blockPos, World& world, bool left) {
     BlockPos neighbourBlockPos = blockPos+(left ? BlockPos(-1, 0) : BlockPos(1, 0));
     if (world.getBlockAt(blockPos).getSettings().isPushable()) { 
         if (world.getBlockAt(neighbourBlockPos).getSettings().isPushable()) {
@@ -135,7 +135,7 @@ void tryPushBlock(BlockPos& blockPos, World& world, bool left) {
  * @param playerPos The position of the player.
  * @param world Reference to the World object representing the current world.
  */
-void tryBlockGravity(BlockPos& playerPos, World& world) {
+static void tryBlockGravity(BlockPos& playerPos, World& world) {
     if (world.getBlockAt(playerPos.add(0, 2)).getSettings().hasGravity() && world.getBlockAt(playerPos.add(0, 3)) == world.getBlockRegistry().AIR) {
         world.setBlockAt(playerPos.add(0, 3), world.getBlockAt(playerPos.add(0, 2)));
         world.setBlockAt(playerPos.add(0, 2), world.getBlockRegistry().AIR);
@@ -153,7 +153,7 @@ void tryBlockGravity(BlockPos& playerPos, World& world) {
  * @return true if the player's position was successfully updated, false otherwise.
  */
 
-bool onInput(char lastChar, World& world, Player& player) {
+static bool onInput(char lastChar, World& world, Player& player) {
     switch (lastChar) {
         case ' ':
         case 'w':
@@ -182,7 +182,7 @@ bool onInput(char lastChar, World& world, Player& player) {
  * In this case, the game state is updated every 100 milliseconds (to simulate the player's input).
  * If the player dies or reaches the goal, exit the loop.
  */
-void inputLoop(Player& player, World& world, bool testMode, unsigned int worldIndex) {
+static void inputLoop(Player& player, World& world, bool testMode, unsigned int worldIndex) {
     vector<string> testFile = readFileAsVector("TEST.txt");
     unsigned int inputIndex = 0;
     while (player.isAlive() && !player.hasReachedGoal()) {

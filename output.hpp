@@ -12,7 +12,7 @@ using std::endl;
  * Move the console cursor up by one line.
  * Used to overwrite the previous line.
  */
-void jumpBackOneLine() {
+static void jumpBackOneLine() {
     std::cout << "\033[1A";
 }
 
@@ -22,9 +22,9 @@ void jumpBackOneLine() {
  * On positions that overlap with the player texture, the relevant character of the player's texture is printed instead.
  * 
  * @param world Reference to the World object representing the current world.
- * @param player Reference to the Player object representing the player's state.
+ * @param playerTexture Reference to the current Player texture.
  */
-void render(World &world, vector<vector<char>> playerTexture) {
+static void render(World &world, vector<vector<char>> playerTexture) {
     vector<vector<Block>> canvas = world.getFieldState();
      
 
@@ -51,9 +51,9 @@ void render(World &world, vector<vector<char>> playerTexture) {
  * and the player.
  *
  * @param world Reference to the World object representing the current world.
- * @param player Reference to the Player object representing the player's state.
+ * @param playerTexture Reference to the current Player texture.
  */
-void redraw(World &world, vector<vector<char>> playerTexture) {
+static void redraw(World &world, vector<vector<char>> playerTexture) {
     for (unsigned int y = 0; y <= world.getMaxY(); y++) {
         jumpBackOneLine();
     }
@@ -64,7 +64,7 @@ void redraw(World &world, vector<vector<char>> playerTexture) {
  * Prints a guide for the player, explaining what each block in the game
  * represents.
  */
-void printGuide() {
+static void printGuide() {
     // We use a vector here instead of a map, because we want to keep this order
     std::vector<std::pair<string, Color>> guide = {
         {"- Plattform", Color::RESET},

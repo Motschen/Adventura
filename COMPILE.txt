@@ -1,1 +1,5 @@
-g++ -std=c++23 -Wall ./main.cpp -o ./adventura && ./adventura
+g++ -std=c++23 -Wall main.cpp -o adventura
+ODER
+clang++ -std=c++23 -Weverything -Wno-c++98-compat -Wno-padded -Wall main.cpp -o adventura
+
+Ausführen mit: ./adventura

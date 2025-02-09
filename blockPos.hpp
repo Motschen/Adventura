@@ -6,12 +6,22 @@ public:
     /**
      * Define an in-world position.
      * 
-     * @param x The x-coordinate of the BlockPos.
-     * @param y The y-coordinate of the BlockPos.
+     * @param xCoord The x-coordinate of the BlockPos.
+     * @param yCoord The y-coordinate of the BlockPos.
      */
-    BlockPos(int x, int y) {
-        this->x = x;
-        this->y = y;
+    BlockPos(int xCoord, int yCoord) {
+        this->x = xCoord;
+        this->y = yCoord;
+    }
+    /**
+     * Define an in-world position.
+     * 
+     * @param xCoord The x-coordinate of the BlockPos.
+     * @param yCoord The y-coordinate of the BlockPos.
+     */
+    BlockPos(unsigned int xCoord, unsigned int yCoord) {
+        this->x = static_cast<int>(xCoord);
+        this->y = static_cast<int>(yCoord);
     }
     
     /**
@@ -56,12 +66,12 @@ public:
     /**
      * Add the given coordinates to the BlockPos.
      * 
-     * @param x The x-coordinate to add.
-     * @param y The y-coordinate to add.
+     * @param xOffset The x-coordinate to add.
+     * @param yOffset The y-coordinate to add.
      * @return The BlockPos with the given coordinates added.
      */
-    BlockPos add(int x, int y) {
-        return BlockPos(this->x + x, this->y + y);
+    BlockPos add(int xOffset, int yOffset) {
+        return BlockPos(this->x + xOffset, this->y + yOffset);
     }
     
     BlockPos operator+(BlockPos offset) {

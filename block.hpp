@@ -5,10 +5,10 @@
 
 class Block {
 private:
-    Identifier id = Identifier("adventure", "missing");
-    char encoding;
-    Color color;
-    BlockSettings settings;
+    Identifier id_ = Identifier("adventure", "missing");
+    char encoding_;
+    Color color_;
+    BlockSettings settings_;
 
 public:
     /**
@@ -18,7 +18,7 @@ public:
      * @param encoding The encoding of the block, which is the character used to represent it in the game world.
      * @param settings The settings of the block, which define how the block behaves in the game world.
      */
-    Block(Identifier id, char encoding, BlockSettings settings) : Block(id, encoding, Color::RESET, settings) {};
+    Block(Identifier id, char encoding, BlockSettings settings) : Block(id, encoding, Color::RESET, settings) {}
     /**
      * Constructs a block with the given identifier, encoding, color and settings.
      *
@@ -28,11 +28,11 @@ public:
      * @param settings The settings of the block, which define how the block behaves in the game world.
      */
     Block(Identifier id, char encoding, Color color, BlockSettings settings) {
-        this->id = id;
-        this->encoding = encoding;
-        this->color = color;
-        this->settings = settings;
-    };
+        this->id_ = id;
+        this->encoding_ = encoding;
+        this->color_ = color;
+        this->settings_ = settings;
+    }
 
     /**
      * Returns the settings associated with the block.
@@ -40,7 +40,7 @@ public:
      * @return The settings of the block, including solidity, pushability, and more.
      */
     BlockSettings getSettings() {
-        return settings;
+        return settings_;
     }
 
     /**
@@ -51,7 +51,7 @@ public:
      * @return The identifier of the block.
      */
     Identifier getId() {
-        return id;
+        return id_;
     }
 
     /**
@@ -62,7 +62,7 @@ public:
      * @return The color of the block.
      */
     Color getColor() {
-        return color;
+        return color_;
     }
     
     /**
@@ -73,7 +73,7 @@ public:
      * @return The character encoding of the block.
      */
     char getEncoding() {
-        return encoding;
+        return encoding_;
     }
     
     /**
@@ -84,11 +84,11 @@ public:
      * @param encoding The character encoding to set for the block.
      */
     void setEncoding(char encoding) {
-        this->encoding = encoding;
+        this->encoding_ = encoding;
     }
 
     std::ostream& operator<<(std::ostream& out) {
-        out << encoding;
+        out << encoding_;
         return out;
     }
     bool operator==(Block otherBlock) {

@@ -23,7 +23,7 @@ using std::vector;
  * @param extension The file extension to filter by
  * @return A list of all filtered file names in the specified directory, sorted alphabetically.
  */
-vector<string> getOrderedFileNames(string dir, string extension) {
+static vector<string> getOrderedFileNames(string dir, string extension) {
     vector<string> worlds;
     // This used to be elegant and iterate over all files in the worlds directory,
     // but because of the weird restriction with no folders being allowed, we just filter the files based on their extension.
@@ -44,7 +44,7 @@ vector<string> getOrderedFileNames(string dir, string extension) {
  * @param fileLocation The location of the file to read.
  * @return The content of the file as a vector of strings.
  */
-vector<string> readFileAsVector(const string& fileLocation) {
+static vector<string> readFileAsVector(const string& fileLocation) {
   vector<string> lines;
 
   std::ifstream file(fileLocation);
@@ -65,7 +65,7 @@ vector<string> readFileAsVector(const string& fileLocation) {
  * @param fileLocation Path to the file to be printed.
  * @param color Color to be used for the output.
  */
-void printFile(string fileLocation, Color color) {
+static void printFile(string fileLocation, Color color) {
     cout << color;
     vector<string> file = readFileAsVector(fileLocation);
     for (unsigned int y = 0; y < file.size(); y++) {

@@ -5,8 +5,8 @@ using std::string;
 
 class Identifier {
 public:
-    std::string nameSpace;
-    std::string path;
+    std::string nameSpace_;
+    std::string path_;
 
 
     /**
@@ -16,22 +16,20 @@ public:
      * @param nameSpace The namespace of the Identifier.
      * @param path The path of the Identifier.
      */
-    Identifier(std::string nameSpace, std::string path) : nameSpace(nameSpace), path(path) {
-        
-    }
+    Identifier(std::string nameSpace, std::string path) : nameSpace_(nameSpace), path_(path) {}
 
     std::ostream& operator<<(std::ostream& out) {
-        out << nameSpace << ":" << path;
+        out << nameSpace_ << ":" << path_;
         return out;
     }
     std::istream& operator>>(std::istream& in) {
         string input;
         in >> input;
-        nameSpace = input.substr(0, input.find(":"));
-        path = input.substr(input.find(":") + 1, input.length());
+        nameSpace_ = input.substr(0, input.find(":"));
+        path_ = input.substr(input.find(":") + 1, input.length());
         return in;
     }
     bool operator==(Identifier otherId) {
-      return this->nameSpace == otherId.nameSpace && this->path == otherId.path;
+      return this->nameSpace_ == otherId.nameSpace_ && this->path_ == otherId.path_;
     }
 };

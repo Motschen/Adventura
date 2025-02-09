@@ -17,8 +17,8 @@ using std::endl;
 bool startWorld(string worldFile);
 bool parseArgs(int argc, char *argv[]);
 
-bool testMode = false;
-unsigned int worldIndex = 2;
+static bool testMode = false;
+static unsigned int worldIndex = 2;
 
 /**
  * Entry point of the program.
@@ -31,15 +31,16 @@ int main(int argc, char *argv[]) {
     if (parseArgs(argc, argv)) return 0;
     
     if (!testMode) {
-        printFile("./start.screen.txt", Color::BRIGHT_YELLOW);
+        printFile("./start.screen.txt", Color::BRIGHT_YELLOW); // Show the story introduction
         waitForInput();
-        printGuide();
+        printGuide(); // Show the block guide
         waitForInput();
     }
     
     // Load every world in order
     for (const auto & world : getOrderedFileNames("./", ".world.txt"))
-        if (!startWorld(world)) return 0;
+        if (!startWorld(world)) return 0; // If the player dies, exit
+
     // Print the victory screen once all levels have been completed
     printFile("./victory.screen.txt", Color::BRIGHT_GREEN);
 
@@ -85,14 +86,14 @@ bool startWorld(string worldFile) {
 bool parseArgs(int argc, char *argv[]) {
     if (argc > 1) {
         for (int i = 1; i < argc; i++) {
-            string arg = string(argv[i]);
+            string arg = string(argv[i]); // Unsafe buffer usage warnings can be safely ignored, as we do check for the size
             if (arg == "-h" || arg == "--help") 
                 break;
             else if (arg == "-t" || arg == "--test") 
                 testMode = true;
             
             else if ((arg == "-l" || arg == "--level") && argc > i + 1) {
-                if (!startWorld("./" + string(argv[i+1])))
+                if (!startWorld("./" + string(argv[i+1]))) // This warning can also be ignored, again – we do this in a safe way
                     return true; // Load only the specified world
                 else
                     printFile("./completed_single_level.screen.txt", Color::BRIGHT_GREEN);

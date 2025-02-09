@@ -13,10 +13,10 @@ public:
     /**
      * Create a World object using the blocks defined in BlockRegistry.
      * 
-     * @param blockRegistry The BlockRegistry to use.
+     * @param worldBlockRegistry The BlockRegistry to use.
      */
-    World(BlockRegistry blockRegistry) {
-        this->blockRegistry = blockRegistry;
+    World(BlockRegistry worldBlockRegistry) {
+        this->blockRegistry = worldBlockRegistry;
     }
     
     /**
@@ -54,7 +54,7 @@ public:
         while (field.size() <= pos.getUnsignedY()) field.push_back({});
         while (field[pos.getUnsignedY()].size() <= pos.getUnsignedX()) field[pos.getUnsignedY()].push_back(blockRegistry.AIR);
 
-        field[pos.getUnsignedY()][pos.getX()] = block;
+        field[pos.getUnsignedY()][pos.getUnsignedX()] = block;
         if (block.getSettings().hasGravity() && containsPos(pos.add(0, 1)) && getBlockAt(pos.add(0, 1)) == blockRegistry.AIR) {
             setBlockAt(pos.add(0, 1), block);
             setBlockAt(pos, blockRegistry.AIR);
@@ -71,7 +71,7 @@ public:
      */
     Block& getBlockAt(BlockPos pos) {
         if (pos.getUnsignedY() < field.size() && pos.getUnsignedX() < field[pos.getUnsignedY()].size()) {
-            return field[pos.getY()][pos.getX()];
+            return field[pos.getUnsignedY()][pos.getUnsignedX()];
         }
         //cout << "Out of bounds: " << pos.getX() << ", " << pos.getY() << endl;
         return blockRegistry.AIR;

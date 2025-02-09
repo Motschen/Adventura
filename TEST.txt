@@ -1,4 +1,4 @@
-Für einen automatisierten Test, führe das Programm mit dem Argument --test aus. Zum Spielen einfach ohne Parameter.
+Für einen automatisierten Test, führe das Programm mit dem Argument --test aus. Zum Spielen einfach ohne Parameter. Die untenstehenden Eingaben sind eine mögliche Kombination zum durchspielen – jede Zeile steht dabei für ein Level.
 
 asdddddddddddddddwwwwwwddddddwwwwdddd
 aaaaaaassssssddddssssdddddddddddwwwwwddddddwwwwdddddddddddddddddddd
