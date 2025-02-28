@@ -11,6 +11,8 @@
 #include "adventura.cpp"
 #include "events.hpp"
 
+using std::pair;
+
 constexpr uint32_t windowStartWidth = 1200;
 constexpr uint32_t windowStartHeight = 800;
 
@@ -196,6 +198,7 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event* event) {
 
     return SDL_APP_CONTINUE;
 }
+vector<pair<vector<char>, SDL_Texture*>> textureCache;
 
 SDL_AppResult SDL_AppIterate(void *appstate) {
     auto* app = (AppContext*)appstate;
@@ -216,11 +219,25 @@ SDL_AppResult SDL_AppIterate(void *appstate) {
     vector<vector<char>> worldState = render(*(app->world), (*app->player).mapToWorldspace());
     for (int i = 0; i < worldState.size(); i++) {
         vector<char> line = worldState.at(i);
-        SDL_Surface* surfaceMessage = TTF_RenderText_Solid(app->font, line.data(), line.size(), { 255,255,255 });
+        SDL_Texture* messageTex;
+        if (i < textureCache.size() && textureCache.at(i).first == line) {
+            messageTex = textureCache.at(i).second;
+        } 
+        else {
+            if (i < textureCache.size()) {
+                SDL_DestroyTexture(textureCache.at(i).second);
+            }
+            SDL_Surface* surfaceMessage = TTF_RenderText_Solid(app->font, line.data(), line.size(), { 255,255,255 });
 
-        // make a texture from the surface
-        SDL_Texture* messageTex = SDL_CreateTextureFromSurface(app->renderer, surfaceMessage);
-        
+            // make a texture from the surface
+            messageTex = SDL_CreateTextureFromSurface(app->renderer, surfaceMessage);
+            
+            SDL_DestroySurface(surfaceMessage);
+            while (textureCache.size() <= i) {
+                textureCache.push_back({{}, nullptr});
+            }
+            textureCache.at(i) = {line, messageTex};
+        }
         auto messageTexProps = SDL_GetTextureProperties(messageTex);
         SDL_FRect text_rect{
             .x = 0,
@@ -228,9 +245,8 @@ SDL_AppResult SDL_AppIterate(void *appstate) {
             .w = float(SDL_GetNumberProperty(messageTexProps, SDL_PROP_TEXTURE_WIDTH_NUMBER, 0))*2,
             .h = float(SDL_GetNumberProperty(messageTexProps, SDL_PROP_TEXTURE_HEIGHT_NUMBER, 0))*2
         };
-        SDL_DestroySurface(surfaceMessage);
+        
         SDL_RenderTexture(app->renderer, messageTex, NULL, &text_rect);
-        SDL_DestroyTexture(messageTex);
     }
     //SDL_RenderTexture(app->renderer, app->messageTex, NULL, &app->messageDest);
 
