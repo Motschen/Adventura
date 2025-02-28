@@ -154,6 +154,7 @@ static void tryBlockGravity(BlockPos& playerPos, World& world) {
  */
 
 static bool onInput(char lastChar, World& world, Player& player) {
+    if (player.isFreeFalling()) return false;
     switch (lastChar) {
         case ' ':
         case 'w':
@@ -198,10 +199,10 @@ static void inputLoop(Player& player, World& world, bool testMode, unsigned int 
             jumpBackOneLine();
         }
 
-        for (char lastChar : currentInput) {
-            if (onInput(lastChar, world, player))
-                redraw(world, player.mapToWorldspace());
-        }
+        //for (char lastChar : currentInput) {
+        //    if (onInput(lastChar, world, player))
+        //        redraw(world, player.mapToWorldspace());
+        //}
     }
     inputIndex = 0;
 }

@@ -47,7 +47,6 @@ public:
     void move(BlockPos offset) {
         setPos(pos + offset);
     }
-
     
     /**
      * Updates the player's position and checks for any conditions that would update the state of the player.
@@ -65,13 +64,15 @@ public:
 
         if (world.getBlockAt(newPos.add(0, 2)) == world.getBlockRegistry().WATER) fallLength = 0;
 
-        isFreeFalling = !world.getBlockAt(newPos.add(0, 2)).getSettings().isSolid();
-        if (isFreeFalling) {
+        freeFalling = !world.getBlockAt(newPos.add(0, 2)).getSettings().isSolid();
+        if (freeFalling) {
             fallLength += 1;
             if (fallLength > 2) playerTexture = FALLING_PLAYER_TEXTURE;
-            redraw(world, this->mapToWorldspace());
-            std::this_thread::sleep_for(std::chrono::milliseconds(100 / fallLength + 50));
-            move(0, 1);
+            SDL_AddTimer(100 / fallLength + 50, [](void *userdata, SDL_TimerID timerID, Uint32 interval) -> Uint32 {
+                Player *player = (Player *)userdata;
+                player->move(0, 1);
+                return 0;
+            }, this);
         }
         else {
             playerTexture = REGULAR_PLAYER_TEXTURE;
@@ -87,7 +88,7 @@ public:
      */
     void unalive() {
         playerTexture = DEAD_PLAYER_TEXTURE;
-        redraw(world, this->mapToWorldspace());
+        //redraw(world, this->mapToWorldspace());
         alive = false;
     }
     
@@ -98,6 +99,14 @@ public:
      */
     bool isAlive() {
         return alive;
+    }
+    /**
+     * Checks if the player is still alive.
+     *
+     * @return true if the player is alive, false otherwise.
+     */
+    bool isFreeFalling() {
+        return freeFalling;
     }
     
     /**
@@ -141,7 +150,7 @@ private:
     std::array<std::array<char, 3>, 3> playerTexture;
     BlockPos pos = BlockPos(0, 0);
     bool alive = true;
-    bool isFreeFalling = false;
+    bool freeFalling = false;
     bool reachedGoal = false;
     int fallLength = 0;
 
