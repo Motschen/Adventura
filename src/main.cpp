@@ -31,18 +31,18 @@ int main(int argc, char *argv[]) {
     if (parseArgs(argc, argv)) return 0;
     
     if (!testMode) {
-        printFile("./start.screen.txt", Color::BRIGHT_YELLOW); // Show the story introduction
+        printFile("./screens/start.txt", Color::BRIGHT_YELLOW); // Show the story introduction
         waitForInput();
         printGuide(); // Show the block guide
         waitForInput();
     }
     
     // Load every world in order
-    for (const auto & world : getOrderedFileNames("./", ".world.txt"))
+    for (const auto & world : getOrderedFileNames("./worlds/", ".txt"))
         if (!startWorld(world)) return 0; // If the player dies, exit
 
     // Print the victory screen once all levels have been completed
-    printFile("./victory.screen.txt", Color::BRIGHT_GREEN);
+    printFile("./screens/victory.txt", Color::BRIGHT_GREEN);
 
     return 0;
 }
@@ -64,7 +64,7 @@ bool startWorld(string worldFile) {
     inputLoop(player, world, testMode, worldIndex);
 
     worldIndex++;
-    if (!player.isAlive()) printFile("./death.screen.txt", Color::BRIGHT_RED);
+    if (!player.isAlive()) printFile("./screens/death.txt", Color::BRIGHT_RED);
     return player.hasReachedGoal();
 }
 
@@ -96,12 +96,12 @@ bool parseArgs(int argc, char *argv[]) {
                 if (!startWorld("./" + string(argv[i+1]))) // This warning can also be ignored, again – we do this in a safe way
                     return true; // Load only the specified world
                 else
-                    printFile("./completed_single_level.screen.txt", Color::BRIGHT_GREEN);
+                    printFile("./screens/completed_single_level.txt", Color::BRIGHT_GREEN);
                 return true;
             }
         }
         if (!testMode) {
-            printFile("./help.screen.txt", Color::BRIGHT_BLUE); // Print help screen
+            printFile("./screens/help.txt", Color::BRIGHT_BLUE); // Print help screen
             return true;
         }
     }
