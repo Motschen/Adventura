@@ -9,6 +9,7 @@
 #include <filesystem>
 
 #include "adventura.cpp"
+#include "events.hpp"
 
 constexpr uint32_t windowStartWidth = 1200;
 constexpr uint32_t windowStartHeight = 800;
@@ -16,6 +17,7 @@ constexpr uint32_t windowStartHeight = 800;
 void loadWorld(void* appstate, string worldFile);
 void resetWorld(void* appstate);
 void loadNextWorld(void* appstate);
+void playSound(void* appstate, string soundFile);
 
 struct AppContext {
     SDL_Window* window;
@@ -28,6 +30,7 @@ struct AppContext {
     Player* player;
     World* world;
     TTF_Font* font;
+    std::filesystem::path basePath;
 };
 
 SDL_AppResult SDL_Fail(){
@@ -40,6 +43,7 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
     if (not SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO)){
         return SDL_Fail();
     }
+    registerEvents();
     
     // init TTF
     if (not TTF_Init()) {
@@ -148,7 +152,8 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
        .music = music,
        .player = player,
        .world = world,
-       .font = font
+       .font = font,
+       .basePath = basePath
     };
     loadNextWorld(*appstate);
     
@@ -177,7 +182,12 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event* event) {
     }
 
     if ((*app->player).hasReachedGoal()) {
+        playSound(appstate, "assets/success.ogg");
         loadNextWorld(appstate);
+    }
+    if (event->type == playerDeathEvent) {
+        playSound(appstate, "assets/failure.ogg");
+        resetWorld(appstate);
     }
     
     if (event->type == SDL_EVENT_QUIT) {
@@ -281,4 +291,14 @@ void loadNextWorld(void* appstate) {
         resetWorld(appstate);
         // You won
     }
+}
+void playSound(void* appstate, string soundFile) {
+    auto* app = (AppContext*)appstate;
+    // load the sound
+    auto soundPath = app->basePath / soundFile;
+    auto sound = Mix_LoadWAV(soundPath.string().c_str());
+    if (not sound) {
+        return;
+    }
+    Mix_PlayChannel(-1, sound, 0);
 }

@@ -1,3 +1,6 @@
 "Sunset On The Beach" Kumiku
 Licensed under CC0 1.0
 https://freemusicarchive.org/music/Komiku/Poupis_incredible_adventures_/Komiku_-_Poupis_incredible_adventures__-_55_Sunset_on_the_beach/
+
+Success sound (CC0): https://freesound.org/people/jolup123/sounds/668791/
+Failure sound (CC0): https://freesound.org/people/_def/sounds/751863/

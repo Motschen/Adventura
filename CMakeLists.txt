@@ -154,6 +154,8 @@ else()
     copy_helper("assets/Inter-VariableFont.ttf")
     copy_helper("assets/MartianMono-VariableFont.ttf")
     copy_helper("assets/sunset_on_the_beach.ogg")
+    copy_helper("assets/success.ogg")
+    copy_helper("assets/failure.ogg")
     copy_helper("assets/gs_tiger.svg")
 endif()
 

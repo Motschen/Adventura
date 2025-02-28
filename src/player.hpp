@@ -5,6 +5,7 @@
 
 #include "blockPos.hpp"
 #include "output.hpp"
+#include "events.hpp"
 
 class Player {
 public:
@@ -55,7 +56,7 @@ public:
      */
     void setPos(BlockPos newPos) {
         if (!world.containsPos(newPos)) {
-            alive = false;
+            unalive();
             return;
         }
         this->pos = newPos;
@@ -90,6 +91,7 @@ public:
         playerTexture = DEAD_PLAYER_TEXTURE;
         //redraw(world, this->mapToWorldspace());
         alive = false;
+        emitDeathEvent();
     }
     
     /**
