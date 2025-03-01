@@ -7,11 +7,15 @@
 #include <cmath>
 #include <string_view>
 #include <filesystem>
+#include <map>
 
 #include "adventura.cpp"
 #include "events.hpp"
+#include "renderer.cpp"
+#include "appcontext.hpp"
 
 using std::pair;
+using std::map;
 
 constexpr uint32_t windowStartWidth = 1200;
 constexpr uint32_t windowStartHeight = 800;
@@ -20,20 +24,7 @@ void loadWorld(void* appstate, string worldFile);
 void resetWorld(void* appstate);
 void loadNextWorld(void* appstate);
 void playSound(void* appstate, string soundFile);
-
-struct AppContext {
-    SDL_Window* window;
-    SDL_Renderer* renderer;
-    SDL_Texture* messageTex, *imageTex;
-    SDL_FRect messageDest;
-    SDL_AudioDeviceID audioDevice;
-    Mix_Music* music;
-    SDL_AppResult app_quit = SDL_APP_CONTINUE;
-    Player* player;
-    World* world;
-    TTF_Font* font;
-    std::filesystem::path basePath;
-};
+void setScale(void* appstate);
 
 SDL_AppResult SDL_Fail(){
     SDL_LogError(SDL_LOG_CATEGORY_CUSTOM, "Error %s", SDL_GetError());
@@ -160,10 +151,10 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
     loadNextWorld(*appstate);
     
     SDL_SetRenderVSync(renderer, -1);   // enable vysnc
+
+    setScale(*appstate);
     
     SDL_Log("Application started successfully!");
-
-    //start(argc, argv);
 
     return SDL_APP_CONTINUE;
 }
@@ -191,6 +182,10 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event* event) {
         playSound(appstate, "assets/failure.ogg");
         resetWorld(appstate);
     }
+
+    if (event->type == SDL_EVENT_WINDOW_RESIZED) {
+        setScale(appstate);
+    }
     
     if (event->type == SDL_EVENT_QUIT) {
         app->app_quit = SDL_APP_SUCCESS;
@@ -198,7 +193,7 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event* event) {
 
     return SDL_APP_CONTINUE;
 }
-vector<pair<vector<char>, SDL_Texture*>> textureCache;
+
 
 SDL_AppResult SDL_AppIterate(void *appstate) {
     auto* app = (AppContext*)appstate;
@@ -210,44 +205,16 @@ SDL_AppResult SDL_AppIterate(void *appstate) {
     auto blue = (std::sin(time) * 2 + 1) / 2.0 * 255;
     SDL_SetRenderDrawBlendMode(app->renderer, SDL_BLENDMODE_ADD);
     SDL_SetRenderDrawColor(app->renderer, red, green, blue, 1);
-    SDL_SetRenderDrawColor(app->renderer, 0, 0, 0, 20);
+    SDL_SetRenderDrawColor(app->renderer, 20, 20, 20, 20);
 
     SDL_RenderClear(app->renderer);
 
+    setCameraPos(appstate);
+
     // Renderer uses the painter's algorithm to make the text appear above the image, we must render the image first.
     //SDL_RenderTexture(app->renderer, app->imageTex, NULL, NULL);
-    vector<vector<char>> worldState = render(*(app->world), (*app->player).mapToWorldspace());
-    for (int i = 0; i < worldState.size(); i++) {
-        vector<char> line = worldState.at(i);
-        SDL_Texture* messageTex;
-        if (i < textureCache.size() && textureCache.at(i).first == line) {
-            messageTex = textureCache.at(i).second;
-        } 
-        else {
-            if (i < textureCache.size()) {
-                SDL_DestroyTexture(textureCache.at(i).second);
-            }
-            SDL_Surface* surfaceMessage = TTF_RenderText_Solid(app->font, line.data(), line.size(), { 255,255,255 });
-
-            // make a texture from the surface
-            messageTex = SDL_CreateTextureFromSurface(app->renderer, surfaceMessage);
-            
-            SDL_DestroySurface(surfaceMessage);
-            while (textureCache.size() <= i) {
-                textureCache.push_back({{}, nullptr});
-            }
-            textureCache.at(i) = {line, messageTex};
-        }
-        auto messageTexProps = SDL_GetTextureProperties(messageTex);
-        SDL_FRect text_rect{
-            .x = 0,
-            .y = float(i * SDL_GetNumberProperty(messageTexProps, SDL_PROP_TEXTURE_HEIGHT_NUMBER, 0)*2),
-            .w = float(SDL_GetNumberProperty(messageTexProps, SDL_PROP_TEXTURE_WIDTH_NUMBER, 0))*2,
-            .h = float(SDL_GetNumberProperty(messageTexProps, SDL_PROP_TEXTURE_HEIGHT_NUMBER, 0))*2
-        };
-        
-        SDL_RenderTexture(app->renderer, messageTex, NULL, &text_rect);
-    }
+    renderWorld(appstate);
+    renderPlayer(appstate);
     //SDL_RenderTexture(app->renderer, app->messageTex, NULL, &app->messageDest);
 
     SDL_RenderPresent(app->renderer);
@@ -302,6 +269,7 @@ void loadNextWorld(void* appstate) {
     int index = std::find(worldFiles.begin(), worldFiles.end(), currentWorld) - worldFiles.begin();
     if (index + 1 < worldFiles.size()) {
         loadWorld(appstate, worldFiles.at(index + 1));
+        enteredNextWorld = true;
     }
     else {
         resetWorld(appstate);

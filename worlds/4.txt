@@ -3,7 +3,7 @@ Welt 4: In der Klemme
     
 S                 
      
-  ---
+  -0-
    0       
    0           x  x       
    0     -------------

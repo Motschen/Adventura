@@ -151,12 +151,28 @@ else()
 		    DEPENDS "${filename}"
 	    )
     endmacro()
+    macro(copy_dir filename)
+        if (ANDROID)
+            # MOBILE_ASSETS_DIR is set in the gradle file via the cmake command line and points to the Android Studio Assets folder. 
+            # when we copy assets there, the Android build pipeline knows to add them to the apk. 
+            set(outname "${MOBILE_ASSETS_DIR}/${filename}")    
+        else()
+            # for platforms that do not have a good packaging format, all we can do is copy the assets to the process working directory.
+            set(outname "${CMAKE_BINARY_DIR}/$<CONFIGURATION>/${filename}")
+        endif()
+        add_custom_command(POST_BUILD
+            TARGET "${EXECUTABLE_NAME}"
+		    COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_LIST_DIR}/src/${filename}" "${outname}"
+		    DEPENDS "${filename}"
+	    )
+    endmacro()
     copy_helper("assets/Inter-VariableFont.ttf")
     copy_helper("assets/MartianMono-VariableFont.ttf")
     copy_helper("assets/sunset_on_the_beach.ogg")
     copy_helper("assets/success.ogg")
     copy_helper("assets/failure.ogg")
     copy_helper("assets/gs_tiger.svg")
+    copy_dir("assets/textures/")
 endif()
 
 # set some extra configs for each platform

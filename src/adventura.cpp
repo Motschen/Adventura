@@ -59,7 +59,7 @@ bool startWorld(string worldFile) {
     
     world.loadFromFile(worldFile);
     Player player = Player(world.getStartPos(), world);
-    render(world, player.mapToWorldspace());
+    renderWorld(world);
     
     inputLoop(player, world, testMode, worldIndex);
 
